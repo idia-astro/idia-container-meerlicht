@@ -1,0 +1,219 @@
+Bootstrap: debootstrap
+MirrorURL: http://ftp.leg.uct.ac.za/ubuntu/
+OSVersion: xenial
+Include: software-properties-common
+
+%environment
+        export INSTALLER_PATH=/installer
+        export SOFTWARE_PATH=/software
+        export LC_ALL=C
+        export ZOGYHOME=$SOFTWARE_PATH/ZOGY
+        export PYTHONPATH=$PYTHONPATH:$SOFTWARE_PATH/ZOGY
+        export PATH=$PATH:/usr/local/astrometry/bin/
+        export PATH=/opt/anaconda/bin:$PATH
+        unset XDG_RUNTIME_DIR
+
+%post
+        apt-get update -y
+        apt-get install -y wget vim apt-utils git bzip2 gcc
+        add-apt-repository ppa:jonathonf/python-3.6
+        apt-add-repository multiverse
+        apt-add-repository restricted
+        apt-get update -y
+
+        #mkdir /installer /software
+
+        apt-get install -y libcairo2-dev libnetpbm10-dev netpbm libpng12-dev libjpeg-dev zlib1g-dev libbz2-dev swig libplplot-dev zip build-essential 
+	
+	# Ensure /software is there to install unpackaged stuff
+	INSTALLER_PATH=/installer
+	SOFTWARE_PATH=/software
+	mkdir -p $SOFTWARE_PATH 
+	mkdir -p $INSTALLER_PATH
+
+        #install anaconda
+        cd $INSTALLER_PATH
+        wget https://repo.continuum.io/archive/Anaconda2-4.3.0-Linux-x86_64.sh
+		bash Anaconda2-4.3.0-Linux-x86_64.sh -b -p /opt/anaconda
+		rm -r Anaconda2-4.3.0-Linux-x86_64.sh
+		export PATH=/opt/anaconda/bin:$PATH
+
+		pip install git+https://github.com/spacetelescope/acstools.git
+		conda install -c astropy ccdproc
+		conda install -c ecpy watchdog
+		conda install -c anaconda ephem
+		conda install -c anaconda psycopg2
+		conda install -c auto ushlex
+		conda install -c dgursoy pyfftw
+		conda install -c astropy photutils
+		conda install -c openastronomy sep
+		conda install -c anaconda pyqt
+		conda install -c astropy lmfit
+		conda install -c conda-forge sphinx 
+		pip install sphinx-automodapi
+		pip install slackclient
+
+        #Install FITSIO
+        cd $INSTALLER_PATH
+        wget http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio_latest.tar.gz
+		tar -xvzf cfitsio_latest.tar.gz 
+		cd cfitsio
+	#	./configure --prefix=/usr
+	#	make
+	#	make fpack
+	#	make funpack
+	#	make install
+	#	cd ../
+	#	rm cfitsio_latest.tar.gz
+
+		#Install  Astrometry
+		cd $INSTALLER_PATH
+		wget http://astrometry.net/downloads/astrometry.net-latest.tar.gz 
+		tar -xvzf astrometry.net-latest.tar.gz
+		rm astrometry.net-latest.tar.gz 
+		apt-get install build-essential
+		cd astrometry.net-*
+		make
+		make py
+		make extra
+		make install
+		cd ../
+		cd /usr/local/astrometry/data/
+		wget http://data.astrometry.net/4200/index-4205-00.fits
+		wget http://data.astrometry.net/4200/index-4205-01.fits
+		wget http://data.astrometry.net/4200/index-4205-02.fits
+		wget http://data.astrometry.net/4200/index-4205-03.fits
+		wget http://data.astrometry.net/4200/index-4205-04.fits
+		wget http://data.astrometry.net/4200/index-4205-05.fits
+		wget http://data.astrometry.net/4200/index-4205-06.fits
+		wget http://data.astrometry.net/4200/index-4205-07.fits
+		wget http://data.astrometry.net/4200/index-4205-08.fits
+		wget http://data.astrometry.net/4200/index-4205-09.fits
+		wget http://data.astrometry.net/4200/index-4205-10.fits
+		wget http://data.astrometry.net/4200/index-4205-11.fits
+		wget http://data.astrometry.net/4200/index-4206-00.fits
+		wget http://data.astrometry.net/4200/index-4206-01.fits
+		wget http://data.astrometry.net/4200/index-4206-02.fits
+		wget http://data.astrometry.net/4200/index-4206-03.fits
+		wget http://data.astrometry.net/4200/index-4206-04.fits
+		wget http://data.astrometry.net/4200/index-4206-05.fits
+		wget http://data.astrometry.net/4200/index-4206-06.fits
+		wget http://data.astrometry.net/4200/index-4206-07.fits
+		wget http://data.astrometry.net/4200/index-4206-08.fits
+		wget http://data.astrometry.net/4200/index-4206-09.fits
+		wget http://data.astrometry.net/4200/index-4206-10.fits
+		wget http://data.astrometry.net/4200/index-4206-11.fits
+		wget http://data.astrometry.net/4200/index-4207-00.fits
+		wget http://data.astrometry.net/4200/index-4207-01.fits
+		wget http://data.astrometry.net/4200/index-4207-02.fits
+		wget http://data.astrometry.net/4200/index-4207-03.fits
+		wget http://data.astrometry.net/4200/index-4207-04.fits
+		wget http://data.astrometry.net/4200/index-4207-05.fits
+		wget http://data.astrometry.net/4200/index-4207-06.fits
+		wget http://data.astrometry.net/4200/index-4207-07.fits
+		wget http://data.astrometry.net/4200/index-4207-08.fits
+		wget http://data.astrometry.net/4200/index-4207-09.fits
+		wget http://data.astrometry.net/4200/index-4207-10.fits
+		wget http://data.astrometry.net/4200/index-4207-11.fits
+		wget http://data.astrometry.net/4200/index-4208.fits
+		wget http://data.astrometry.net/4200/index-4209.fits
+		wget http://data.astrometry.net/4200/index-4210.fits
+		wget http://data.astrometry.net/4200/index-4211.fits
+		wget http://data.astrometry.net/4200/index-4212.fits
+
+		cd $INSTALLER_PATH
+		wget http://astromatic.iap.fr/download/sextractor/sextractor-2.19.5.tar.gz
+		tar zxvf sextractor-2.19.5.tar.gz 
+		rm sextractor-2.19.5.tar.gz
+		cd sextractor-2.19.5/
+		wget http://www.fftw.org/fftw-3.3.6-pl1.tar.gz
+		tar zxvf fftw-3.3.6-pl1.tar.gz 
+		rm fftw-3.3.6-pl1.tar.gz
+		cd fftw-3.3.6-pl1/
+		./configure --enable-float --enable-threads
+		make
+		make install
+
+		cd $INSTALLER_PATH
+		wget http://www.netlib.org/lapack/lapack-3.7.0.tgz
+		apt-get install -y libblas-doc libblas-dev libblas-test gfortran
+		pip install milk
+		wget https://sourceforge.net/projects/math-atlas/files/Stable/3.10.3/atlas3.10.3.tar.bz2
+		tar -vxjf atlas3.10.3.tar.bz2 
+		rm atlas3.10.3.tar.bz2
+		cd ATLAS
+		mkdir linux
+		cd linux
+		../configure -b 64 --with-netlib-lapack-tarfile=/lapack-3.7.0.tgz
+		make build
+		make check
+		make time
+		make install
+		cd /
+		rm lapack-3.7.0.tgz
+		cd sextractor-2.19.5/
+		./configure --with-atlas-incdir=/usr/local/atlas/include --with-fftw-incdir=/usr/local/include
+		make
+		make install
+
+		cd $INSTALLER_PATH
+		apt-get install psfex
+		wget http://www.astromatic.net/download/swarp/swarp-2.38.0.tar.gz
+		tar -zxvf swarp-2.38.0.tar.gz
+		rm swarp-2.38.0.tar.gz
+		cd swarp-2.38.0/
+		./configure
+		make
+		make check
+		make install
+
+		cd $INSTALLER_PATH
+		wget http://cdsarc.u-strasbg.fr/ftp/pub/sw/cdsclient.tar.gz
+		tar xvfz cdsclient.tar.gz
+		rm cdsclient.tar.gz
+		cd cdsclient-3.84/
+		./configure
+		make
+		make install
+		make wwwget
+		cp wwwget /usr/local/bin/
+		cd /
+		apt-get install wcstools
+
+		cd $INSTALLER_PATH
+		apt-get install zip
+		wget http://downloads.rclone.org/rclone-v1.17-linux-amd64.zip
+		unzip rclone-current-linux-amd64.zip
+		cd rclone-*-linux-amd64
+		cp rclone /usr/bin/
+		chown root:root /usr/bin/rclone
+		chmod 755 /usr/bin/rclone
+		mkdir -p /usr/local/share/man/man1
+		cp rclone.1 /usr/local/share/man/man1/
+		mandb
+		rclone config		
+
+		cd $INSTALLER_PATH
+		git clone https://github.com/stargaser/sip_tpv.git
+		cd sip_tpv/
+		python setup.py build
+		python setup.py install
+		cd ../
+
+		cd $SOFTWARE_PATH
+		git clone https://github.com/pmvreeswijk/ZOGY.git
+		
+        # Create /users to bind home directories into the container.
+        mkdir -p  /data
+
+        # Cleanup
+        apt-get clean
+        apt-get autoclean
+%run 
+	if [ $# -eq 0 ]; then
+        echo "The following Python modules are installed in this image:"
+        pip freeze
+        echo "Example usage: singularity.img [command] [args] [options]"
+	else
+
+
