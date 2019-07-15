@@ -1,5 +1,5 @@
 Bootstrap: localimage
-From: /mnt/jeremy/containers/meerlicht_update/meerlicht-dev.simg
+From: meerlicht-dev.simg
 Include: software-properties-common
 
 %environment
@@ -8,7 +8,7 @@ Include: software-properties-common
 	export PYTHONPATH=:/data/projects/meerlicht/BGreduce/:/data/projects/meerlicht/subpipe/:/data/projects/meerlicht/ZOGY/
 
 %files
-	/mnt/jeremy/containers/meerlicht_update/GaiaIndexFiles/index*.fits /mnt
+	GaiaIndexFiles/index*.fits /mnt
 
 %post
         apt-get update -y
