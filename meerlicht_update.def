@@ -1,0 +1,25 @@
+Bootstrap: localimage
+From: /mnt/jeremy/containers/meerlicht_update/meerlicht-dev.simg
+Include: software-properties-common
+
+%environment
+	export ZOGYHOME=/data/projects/meerlicht/ZOGY/  
+	export SUBPIPEHOME=/data/projects/meerlicht/subpipe/
+	export PYTHONPATH=:/data/projects/meerlicht/BGreduce/:/data/projects/meerlicht/subpipe/:/data/projects/meerlicht/ZOGY/
+
+%files
+	/mnt/jeremy/containers/meerlicht_update/GaiaIndexFiles/index*.fits /mnt
+
+%post
+        apt-get update -y
+        apt-get install -y qfits-tools 
+
+	cd /usr/local/astrometry/data/
+	rm index*.fits
+	cp /mnt/index*.fits .
+	rm /mnt/index*.fits
+
+
+        # Cleanup
+        apt-get clean
+        apt-get autoclean
